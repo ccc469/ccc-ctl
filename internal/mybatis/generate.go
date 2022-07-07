@@ -8,6 +8,8 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/ccc469/ccc-ctl/internal/util"
 )
 
 var (
@@ -109,6 +111,24 @@ func Run() {
 		return
 	}
 
+	printDatas := [][]string{}
+	for _, item := range tables {
+		var (
+			a []string
+			b string
+		)
+		a = append(a, item["table_name"])
+
+		if item["table_comment"] == "" {
+			b = "/"
+		} else {
+			b = item["table_comment"]
+		}
+		a = append(a, b)
+		printDatas = append(printDatas, a)
+	}
+	util.Print(printDatas, []string{"表名", "备注"})
+
 	for i := 0; i < len(tables); i++ {
 		columns := GetTableColumns(tables[i]["table_name"])
 		// 生成model
@@ -118,7 +138,6 @@ func Run() {
 		// 生成xml
 		GeneratorXml(columns, tables[i])
 	}
-
 }
 
 func PathExists(path string) (bool, error) {
